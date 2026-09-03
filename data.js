@@ -60,7 +60,7 @@ const TRIP = {
       legs: ['d1_zqn_teanau'],
       spots: [
         { name: '퀸스타운 공항 도착 · 캠핑카 인수', en: 'Queenstown Airport (ZQN)', tag: '14:15 도착', desc: '시드니에서 오전 9시 15분 출발, 오후 2시 15분 도착. 공항 근처에서 캠핑카(Indie Campers)를 인수합니다. 차량 설명과 서류 작성에 1시간 정도 걸릴 수 있어요.', meta: '인수 약 1시간', img: IMG.zqn, maps: 'Queenstown Airport', lat: -45.0193, lng: 168.7434 },
-        { name: '장보기', en: "Pak'nSave Queenstown (Frankton)", desc: '공항에서 5분 거리의 대형 마트. 테아나우 3박 동안 먹을 식재료와 물, 모레 밀포드에 가져갈 간식을 미리 사 두면 좋아요. 테아나우에도 작은 슈퍼는 있지만 물건이 적고 비쌉니다.', meta: '30분~1시간', img: IMG.paknsave, maps: "Pak'nSave Queenstown", lat: -45.0109, lng: 168.7492 },
+        { name: '장보기', en: "Pak'nSave Queenstown (Frankton)", desc: '공항에서 5분 거리의 대형 마트. 테아나우 3박 동안 먹을 식재료와 생활용품, 모레 밀포드에 가져갈 간식을 미리 사 두면 좋아요. 바로 옆 아시안 마트에서 한식 재료도 살 수 있어요. 자세한 목록은 아래 \'장보기 리스트\' 버튼에서.', meta: '1시간', img: IMG.paknsave, maps: "Pak'nSave Queenstown", page: '#/shopping', pageLabel: '🛒 장보기 리스트', lat: -45.0109, lng: 168.7492 },
         { name: '데블스 스테어케이스 전망대', en: "Devil's Staircase Lookout", tag: '전망대', desc: '와카티푸 호수를 끼고 도는 절벽길 구간의 전망대. 길고 푸른 호수와 산이 한눈에 들어오는 사진 포인트예요. 잠깐 정차해서 쉬어 가기 좋아요.', meta: '정차 10~15분', img: IMG.devils_staircase, maps: "Devil's Staircase Lookout", lat: -45.2457, lng: 168.7429 },
         { name: '킹스턴 호숫가 휴식', en: 'Kingston', desc: '와카티푸 호수 남쪽 끝의 작은 마을. 잔잔한 호숫가에서 다리를 쉬어가기 좋고, 여기부터는 호수를 벗어나 내륙 평원을 달립니다.', meta: '휴식 20분', img: IMG.kingston, maps: 'Kingston, Otago, New Zealand', lat: -45.3344, lng: 168.7175 },
         { name: '테아나우 호수 노을 산책', en: 'Te Anau Lakefront Walk', desc: '숙소에서 바로 걸어갈 수 있는 호숫가 산책로. 남섬에서 가장 큰 호수인 테아나우 호수 너머로 해가 집니다. 2월에는 오후 9시쯤 해가 져요.', meta: '저녁 식사 후 30분~1시간', img: IMG.teanau_lakefront, maps: 'Te Anau Lakefront', lat: -45.4181, lng: 167.7129 },
@@ -190,6 +190,95 @@ const TRIP = {
       tips: ['출국 전날 저녁에 짐을 미리 정리해 두세요.', '싱가포르 환승: 2월 13일(토) 14:35 싱가포르 출발 → 22:00 인천 도착.'],
     },
   ],
+
+  // 1일차 장보기 가이드 (#/shopping)
+  shopping: {
+    verified: '2026-09-03',
+    intro: '5명 · 7박 · 첫 3박은 테아나우 연박. 퀸스타운 프랭크턴에서 한 번에 크게 사고, 테아나우와 트와이즐에서 신선식품만 보충하면 됩니다. 아침은 매일 캠핑카, 점심은 외식·도시락 반반, 저녁은 캠핑카 4~5회 기준으로 수량을 잡았어요.',
+    stores: [
+      { tag: '메인', name: "Pak'nSave Queenstown", addr: '302 Hawthorne Drive, Frankton, Queenstown 9300', hours: '매일 07:00–22:00', phone: '03 409 1000', desc: '공항에서 차로 5분. 뉴질랜드에서 가장 저렴한 대형마트예요. 식료품·생활용품·맥주·와인을 한 번에.', maps: "Pak'nSave Queenstown", link: 'https://www.paknsave.co.nz/south-island/otago-and-southland/queenstown' },
+      { tag: '한식 재료', name: 'New Star Asian Market', addr: 'The Landing, 4/5 Hawthorne Drive, Frankton', hours: '영업시간은 매장에 확인', phone: '03 441 3016', desc: "Pak'nSave 바로 옆 아시안 마트. 고추장·된장·김치·라면·두부·쌀.", maps: 'New Star Asian Market, The Landing, Frankton', link: 'https://www.thelandingqueenstown.co.nz/new-star/' },
+      { tag: '한식 재료', name: "Kim's Mart", addr: 'B03, 19 Grant Road, Frankton (Queenstown Central)', hours: '매일 09:00–20:00', desc: '한국 과자·소스·라면 등. 퀸스타운 센트럴 쇼핑센터 안, 공항에서 차로 5분.', maps: "Kim's Mart, Queenstown Central, Frankton", link: 'https://www.kims.co.nz/' },
+      { tag: '재보급', name: 'FreshChoice Te Anau', addr: '5 Milford Crescent, Te Anau', desc: '테아나우에서 가장 큰 마트. 빵·우유·과일·채소 보충과 밀포드 가는 날 준비.', maps: 'FreshChoice Te Anau', link: 'https://teanau.store.freshchoice.co.nz/' },
+      { tag: '재보급', name: 'Four Square Twizel', addr: 'Market Place, Twizel', desc: '글렌태너로 가기 전 마지막 마트. 글렌태너 파크에는 카페와 기념품점만 있고, 마운트쿡 빌리지는 허미티지 소매점에서 소량의 식료품을 비싸게 파는 정도예요.', maps: 'Four Square Twizel' },
+    ],
+    notes: [
+      '일회용 비닐봉지는 2019년부터 금지라 장바구니를 챙기세요. 마트에서 재사용 가방을 살 수 있어요.',
+      '플라스틱 일회용 접시·그릇·수저와 농산물용 비닐봉지도 2023년부터 판매 금지예요. 일회용이 필요하면 종이·목재 제품만 있어요.',
+      '마트에서는 맥주와 와인만 팔아요(양주는 전문점). 계산할 때 신분증을 요구할 수 있어요.',
+      '수돗물은 그냥 마셔도 됩니다. 생수는 차에 둘 최소량만 사고 캠핑장에서 물통에 받아 쓰세요.',
+      '캠핑카에 포함된 것: 냄비 2·프라이팬·그릴팬, 접시·볼·컵·수저 각 4개, 도마·칼·주걱·샐러드볼·커피포트, 스펀지·주방세제. 5명이라 식기 1인분을 더 사세요.',
+      '캠핑카에 없는 것: 수건·화장지·비누. 침구와 야외 테이블·의자는 유료 옵션이니 예약 내역을 확인하세요.',
+      '입국할 때 음식은 전부 신고해야 해요(한국에서 가져오는 라면·김 포함). 신고하면 대부분 통과됩니다.',
+      '캠핑장 샤워·세탁기는 $1·$2 동전을 쓰는 곳이 많아요. 마트 계산대에서 잔돈을 만들어 두세요.',
+    ],
+    groups: [
+      { emoji: '🥣', title: '아침·간단식', where: '퀸스타운 첫 장보기 · 테아나우 3박분', items: [
+        { name: '식빵', qty: '2봉' }, { name: '계란', qty: '20개' }, { name: '우유', qty: '2L × 2' }, { name: '버터', qty: '1개' }, { name: '잼', qty: '1개' }, { name: '시리얼', qty: '1박스' }, { name: '요거트', qty: '1kg' }, { name: '슬라이스 치즈', qty: '1팩' }, { name: '햄', qty: '2팩' }, { name: '바나나', qty: '1송이' },
+        { name: '제철 과일', qty: '2~3일치', note: '2월은 체리·살구·복숭아·천도복숭아 철. 크롬웰 직판장에서 더 사요' },
+      ] },
+      { emoji: '🥪', title: '점심·도시락', where: '퀸스타운 첫 장보기', items: [
+        { name: '크래커', qty: '2팩' }, { name: '견과류', qty: '1봉' }, { name: '초콜릿·에너지바', qty: '10개' },
+        { name: '컵라면', qty: '5개', note: '밀포드·마운트쿡 가는 날 보온병 물로' },
+        { name: '보온병', qty: '1~2개', note: '집에서 안 가져왔으면' },
+      ] },
+      { emoji: '🍚', title: '저녁·한식', where: '캠핑카 저녁 4~5회분 · 한식 재료는 아시안 마트', items: [
+        { name: '쌀', qty: '2~3kg', note: '5명 한 끼 약 450g × 5회. medium grain 또는 아시안 마트' },
+        { name: '라면', qty: '10개', note: '비상식·야식' },
+        { name: '김치', qty: '1통', note: '아시안 마트' }, { name: '고추장·된장', qty: '소용량 1개씩', note: '아시안 마트' },
+        { name: '김', qty: '1팩' }, { name: '참치캔', qty: '4개' }, { name: '스팸', qty: '2개' },
+        { name: '소고기·양고기', qty: '2끼분', note: '뉴질랜드 특산, 한국보다 저렴해요' }, { name: '소시지', qty: '1팩' },
+        { name: '채소 (양파·마늘·감자·당근·애호박·버섯)', qty: '3일치' }, { name: '샐러드믹스', qty: '1봉' },
+        { name: '두부', qty: '2모', note: '아시안 마트' },
+      ] },
+      { emoji: '🧂', title: '조미료·기본', where: '퀸스타운 첫 장보기 · 소용량으로', items: [
+        { name: '소금·후추', qty: '소용량 1개씩' }, { name: '식용유', qty: '소병 1' }, { name: '간장', qty: '소병 1' }, { name: '설탕', qty: '소량 1' },
+        { name: '참기름·고춧가루', qty: '소용량', note: '아시안 마트' }, { name: '인스턴트 커피·티백', qty: '1개씩' }, { name: '케첩·마요네즈', qty: '소용량 1개씩' },
+      ] },
+      { emoji: '🥤', title: '음료', where: '퀸스타운 첫 장보기', items: [
+        { name: '생수', qty: '2L × 4', note: '차에 둘 최소량. 수돗물을 마실 수 있어요' },
+        { name: '물통', qty: '5~10L 1개', note: '캠핑장 수돗물로 채워 써요' },
+        { name: '주스', qty: '2L × 2' }, { name: '맥주·와인', qty: '취향껏', note: '마트에서 구매, 신분증 지참' }, { name: '보온병용 차', qty: '1개' },
+      ] },
+      { emoji: '🍳', title: '주방 소모품', where: '퀸스타운 첫 장보기', items: [
+        { name: '키친타월', qty: '2롤' }, { name: '쓰레기봉투', qty: '1롤' }, { name: '지퍼백', qty: '1박스' }, { name: '알루미늄 포일·랩', qty: '1개씩' }, { name: '수세미·행주', qty: '2개씩' },
+        { name: '다회용 컵·접시·수저', qty: '1인분', note: '키트가 4인분이라 5명이면 부족. 일회용은 종이·목재 제품만 있어요' },
+        { name: '라이터', qty: '1개' }, { name: '아이스팩·쿨러백', qty: '2개 · 1개' },
+      ] },
+      { emoji: '🧻', title: '위생·욕실', where: '퀸스타운 첫 장보기 · 캠핑카에 없는 것들', items: [
+        { name: '화장지', qty: '6롤', note: '캠핑카 변기용은 빨리 녹는 제품' }, { name: '수건', qty: '5장', note: '캠핑카 미포함' },
+        { name: '비누·샴푸·바디워시', qty: '소용량 1개씩', note: '캠핑카 미포함' }, { name: '치약·칫솔', qty: '5인분' },
+        { name: '손소독제', qty: '1개' }, { name: '물티슈', qty: '2팩' }, { name: '세탁세제·빨래집게', qty: '소량 1 · 1팩' },
+      ] },
+      { emoji: '🩹', title: '건강·안전', where: '퀸스타운 첫 장보기 · 마트 또는 약국', items: [
+        { name: '자외선차단제 SPF50+', qty: '2개', note: '뉴질랜드 자외선은 한국보다 훨씬 강해요' },
+        { name: '샌드플라이 기피제', qty: '2개', note: '밀포드 필수. 현지 브랜드(Bushman, Aeroguard Tropical Strength)' },
+        { name: '물린 데 바르는 연고', qty: '1개' }, { name: '진통해열제 (Panadol)', qty: '1개' }, { name: '밴드', qty: '1박스' }, { name: '멀미약', qty: '1개' }, { name: '립밤', qty: '5개' },
+      ] },
+      { emoji: '🔦', title: '캠핑카 생활', where: '마트 또는 The Warehouse / Kmart (프랭크턴)', items: [
+        { name: '손전등·헤드랜턴', qty: '2개' }, { name: '차량용 USB 충전기·보조배터리', qty: '1개 · 필요한 만큼' },
+        { name: 'I형 멀티탭', qty: '1개', note: '뉴질랜드 플러그는 I형, 230V' }, { name: '슬리퍼', qty: '5켤레' }, { name: '장바구니', qty: '3개' },
+        { name: '동전 ($1·$2)', qty: '$20 정도', note: '캠핑장 샤워·세탁기용' },
+      ] },
+      { emoji: '🔁', title: '보충 (테아나우·트와이즐)', where: '테아나우 FreshChoice (2/4·2/5 아침) · 트와이즐 Four Square (2/7 오후, 글렌태너·마운트쿡엔 마트 없음)', items: [
+        { name: '빵 (보충)', qty: '1~2봉' }, { name: '우유 (보충)', qty: '2L × 1~2' }, { name: '계란 (보충)', qty: '12개' }, { name: '과일·채소 (보충)', qty: '2~3일치' },
+        { name: '고기 (보충)', qty: '2끼분', note: '트와이즐에서, 글렌태너 2박용' },
+        { name: '연어', qty: '한 끼분', note: '2/7 푸카키 연어 농장에서' },
+        { name: '밀포드 가는 날 간식·물 확인', qty: '2/4 저녁' },
+        { name: '생수 (보충)', qty: '2L × 2', note: '선택, 트와이즐' },
+      ] },
+    ],
+    sources: [
+      { title: "PAK'nSAVE Queenstown 매장 정보", url: 'https://www.paknsave.co.nz/south-island/otago-and-southland/queenstown' },
+      { title: "Kim's Mart", url: 'https://www.kims.co.nz/' },
+      { title: 'New Star Asian Market (The Landing)', url: 'https://www.thelandingqueenstown.co.nz/new-star/' },
+      { title: 'Indie Campers 주방 키트 구성', url: 'https://help.indiecampers.com/hc/en-us/articles/360019400738-What-is-included-in-the-kitchen-kit' },
+      { title: 'Wilderness 캠핑카 준비물 체크리스트', url: 'https://www.wilderness.co.nz/plan-your-trip/blog/campervan-packing-checklist' },
+      { title: '뉴질랜드 환경부 · 일회용 플라스틱 금지', url: 'https://environment.govt.nz/what-you-can-do/campaigns/single-use-plastic-bags-banned/' },
+      { title: '샌드플라이 대비 (Tourist Class NZ)', url: 'https://touristclassnz.com/the-milford-menace/' },
+      { title: '마운트쿡 빌리지 상점 안내 (Hermitage)', url: 'https://www.hermitage.co.nz/experience/hermitage-retail-centre' },
+    ],
+  },
 
   credits: CREDITS,
 };

@@ -159,6 +159,7 @@
           <p>${esc(s.desc)}</p>
           ${s.meta ? `<div class="meta">⏱ ${esc(s.meta)}</div>` : ''}
           <div class="actions">
+            ${s.page ? `<a class="chip" href="${esc(s.page)}">${esc(s.pageLabel || '자세히 보기')}</a>` : ''}
             ${s.maps ? `<a class="chip" href="${mapsUrl(s.maps)}" target="_blank" rel="noopener">📍 구글 지도</a>` : ''}
             ${s.link ? `<a class="chip grey" href="${esc(s.link)}" target="_blank" rel="noopener">🔗 ${esc(s.linkLabel || '홈페이지')}</a>` : ''}
           </div>
@@ -234,6 +235,98 @@
       </div>`;
   }
 
+  // ---------- Shopping ----------
+  const CHECK_KEY = 'nz-shop-checks';
+  function loadChecks() {
+    try { const v = JSON.parse(localStorage.getItem(CHECK_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+  }
+  function saveChecks(arr) {
+    try { localStorage.setItem(CHECK_KEY, JSON.stringify(arr)); } catch (e) { /* 저장 불가 시 화면 체크만 유지 */ }
+  }
+
+  function renderShopping() {
+    const sh = TRIP.shopping;
+    let checked = loadChecks();
+    const total = sh.groups.reduce((a, g) => a + g.items.length, 0);
+
+    const stores = sh.stores.map((st) => `
+      <div class="card info">
+        <div class="label">${esc(st.tag)}</div>
+        <div class="value">${esc(st.name)}</div>
+        <div class="note">${esc(st.addr)}${st.hours ? ' · ' + esc(st.hours) : ''}<br>${esc(st.desc)}</div>
+        <div class="links">
+          <a class="chip" href="${mapsUrl(st.maps)}" target="_blank" rel="noopener">📍 구글 지도</a>
+          ${st.phone ? `<a class="chip grey" href="tel:${esc(st.phone.replace(/\s/g, ''))}">📞 ${esc(st.phone)}</a>` : ''}
+          ${st.link ? `<a class="chip grey" href="${esc(st.link)}" target="_blank" rel="noopener">🔗 홈페이지</a>` : ''}
+        </div>
+      </div>`).join('');
+
+    const groups = sh.groups.map((g, gi) => `
+      <div class="card check-group">
+        <div class="check-title"><h3>${esc(g.emoji)} ${esc(g.title)}</h3><span class="count" data-count="${gi}"></span></div>
+        ${g.where ? `<div class="check-where">${esc(g.where)}</div>` : ''}
+        ${g.items.map((it, ii) => {
+          const id = `${gi}-${ii}`, on = checked.includes(id);
+          return `
+          <label class="check${on ? ' done' : ''}">
+            <input type="checkbox" data-id="${id}"${on ? ' checked' : ''}>
+            <span class="text"><span class="name">${esc(it.name)}</span><span class="qty">${esc(it.qty)}</span>${it.note ? `<span class="memo">${esc(it.note)}</span>` : ''}</span>
+          </label>`;
+        }).join('')}
+      </div>`).join('');
+
+    app.innerHTML = `
+      <div class="topbar"><div class="inner">
+        <a class="btn" href="#/day/1">← DAY 1</a>
+        <span style="font-weight:700;color:var(--accent)">장보기 가이드</span>
+      </div></div>
+      <div class="wrap">
+        <h1 class="page-title">🛒 장보기 가이드</h1>
+        <div class="summary">${esc(sh.intro)}</div>
+        <div class="section">
+          <div class="section-title">🏪 어디서 사나요</div>
+          <div class="info-grid">${stores}</div>
+        </div>
+        <div class="section"><div class="tips"><h3>💡 알아두기</h3><ul>${sh.notes.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>
+        <div class="section">
+          <div class="section-title">✅ 체크리스트 <span class="sub">5명 · 7박 기준 수량. 체크한 내용은 이 휴대폰에 저장돼요</span></div>
+          <div class="check-head"><span id="check-total"></span><button class="btn outline" id="check-reset" type="button">체크 초기화</button></div>
+          <div class="check-list" id="check-list">${groups}</div>
+        </div>
+        <div class="footer">확인일 ${esc(sh.verified)} · 매장 시간과 규정은 바뀔 수 있으니 출발 전 다시 확인하세요.<br>
+          출처: ${sh.sources.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ')}</div>
+      </div>`;
+
+    const list = document.getElementById('check-list');
+    const resetBtn = document.getElementById('check-reset');
+    function updateCounts() {
+      document.getElementById('check-total').textContent = `체크 ${checked.length} / 전체 ${total}`;
+      sh.groups.forEach((g, gi) => {
+        const n = checked.filter((id) => id.indexOf(gi + '-') === 0).length;
+        list.querySelector(`[data-count="${gi}"]`).textContent = `${n} / ${g.items.length}`;
+      });
+      resetBtn.disabled = checked.length === 0;
+    }
+    list.addEventListener('change', (e) => {
+      const box = e.target;
+      if (!box.matches('input[type=checkbox]')) return;
+      const id = box.dataset.id;
+      checked = checked.filter((x) => x !== id);
+      if (box.checked) checked.push(id);
+      box.closest('.check').classList.toggle('done', box.checked);
+      saveChecks(checked);
+      updateCounts();
+    });
+    resetBtn.addEventListener('click', () => {
+      if (!checked.length || !confirm(`체크한 항목 ${checked.length}개를 모두 지울까요?`)) return;
+      checked = [];
+      saveChecks(checked);
+      list.querySelectorAll('input[type=checkbox]').forEach((b) => { b.checked = false; b.closest('.check').classList.remove('done'); });
+      updateCounts();
+    });
+    updateCounts();
+  }
+
   function render() {
     liveMaps.forEach((m) => m.remove());
     liveMaps = [];
@@ -241,6 +334,7 @@
     const m = h.match(/^#\/day\/(\d+)/);
     if (m) renderDay(parseInt(m[1], 10));
     else if (h.indexOf('#/credits') === 0) renderCredits();
+    else if (h.indexOf('#/shopping') === 0) renderShopping();
     else renderHome();
     window.scrollTo(0, 0);
   }

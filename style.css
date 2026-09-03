@@ -143,3 +143,22 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .footer { margin-top: 40px; font-size: 13.5px; color: var(--muted); text-align: center; line-height: 1.6; }
 .credits { font-size: 14px; }
 .credits li { margin: 6px 0; }
+
+/* shopping checklist */
+.page-title { font-size: 26px; font-weight: 700; margin: 20px 0 12px; }
+.check-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; font-weight: 700; color: var(--accent-dark); }
+.check-head .btn:disabled { opacity: 0.35; cursor: default; }
+.check-list { display: grid; gap: 14px; }
+.check-group { padding-bottom: 6px; }
+.check-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px 4px; }
+.check-title h3 { font-size: 18px; }
+.check-title .count { font-size: 14px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.check-where { font-size: 14px; color: var(--muted); padding: 0 16px 8px; line-height: 1.45; }
+.check { display: flex; align-items: flex-start; gap: 12px; min-height: 48px; padding: 9px 16px; cursor: pointer; border-top: 1px solid var(--line); }
+.check input { width: 24px; height: 24px; margin: 2px 0 0; flex: none; accent-color: var(--accent); }
+.check .text { flex: 1; }
+.check .name { font-size: 17px; font-weight: 500; }
+.check .qty { font-size: 15px; color: var(--accent-dark); margin-left: 6px; white-space: nowrap; }
+.check .memo { display: block; font-size: 14px; color: var(--muted); line-height: 1.4; }
+.check.done .name { text-decoration: line-through; color: var(--muted); font-weight: 400; }
+.check.done .qty { color: var(--muted); }
