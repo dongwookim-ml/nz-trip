@@ -371,6 +371,10 @@
           ${checkHead}
         </div>
         ${sections}
+        <div class="section">
+          <div class="section-title">🚐 차량 렌트에 포함된 키트 <span class="sub">캠핑카와 함께 빌린 것. 따로 챙기지 않아도 돼요</span></div>
+          <div class="card">${pk.kits.map((k) => `<div class="kit"><b>${esc(k.name)}</b><span>${esc(k.desc)}</span>${k.note ? `<em>${esc(k.note)}</em>` : ''}</div>`).join('')}</div>
+        </div>
         <div class="section"><div class="tips"><h3>❓ 확인이 필요한 것</h3><ul>${pk.checks.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>
         <div class="footer">확인일 ${esc(pk.verified)} · 입국 규정과 수수료는 바뀔 수 있으니 출발 전 아래 공식 링크에서 다시 확인하세요.<br>출처: ${sourcesHtml(pk.sources)}</div>
       </div>`;
