@@ -121,7 +121,12 @@
           <div class="section-title">📅 일자별 일정 <span class="sub">날짜를 누르면 상세 일정이 열립니다</span></div>
           <div class="day-list">${days}</div>
         </div>
-        <div class="section">
+        <div class="section link-list">
+          <a class="card link-card" href="#/packing">
+            <div class="icon">🎒</div>
+            <div class="body"><div class="t">준비물 가이드</div><div class="d">서류·옷·약 체크리스트 · 우리 가족과 부모님 따로</div></div>
+            <div class="arr">›</div>
+          </a>
           <a class="card link-card" href="#/shopping">
             <div class="icon">🛒</div>
             <div class="body"><div class="t">장보기 가이드</div><div class="d">첫날 퀸스타운 장보기 체크리스트 · 마트 위치 · 알아두기</div></div>
@@ -242,19 +247,68 @@
       </div>`;
   }
 
-  // ---------- Shopping ----------
-  const CHECK_KEY = 'nz-shop-checks';
-  function loadChecks() {
-    try { const v = JSON.parse(localStorage.getItem(CHECK_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+  // ---------- Checklists (shopping / packing) ----------
+  function loadChecks(key) {
+    try { const v = JSON.parse(localStorage.getItem(key)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
   }
-  function saveChecks(arr) {
-    try { localStorage.setItem(CHECK_KEY, JSON.stringify(arr)); } catch (e) { /* 저장 불가 시 화면 체크만 유지 */ }
+  function saveChecks(key, arr) {
+    try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) { /* 저장 불가 시 화면 체크만 유지 */ }
   }
+  function groupHtml(g, gi, checked) {
+    return `
+      <div class="card check-group">
+        <div class="check-title"><h3>${esc(g.emoji)} ${esc(g.title)}</h3><span class="count" data-count="${gi}"></span></div>
+        ${g.where ? `<div class="check-where">${esc(g.where)}</div>` : ''}
+        ${g.items.map((it, ii) => {
+          const id = `${gi}-${ii}`, on = checked.includes(id);
+          return `
+          <label class="check${on ? ' done' : ''}">
+            <input type="checkbox" data-id="${id}"${on ? ' checked' : ''}>
+            <span class="text"><span class="name">${esc(it.name)}</span>${it.qty ? `<span class="qty">${esc(it.qty)}</span>` : ''}${it.note ? `<span class="memo">${esc(it.note)}</span>` : ''}</span>
+          </label>`;
+        }).join('')}
+      </div>`;
+  }
+  const checkHead = '<div class="check-head"><span id="check-total"></span><button class="btn outline" id="check-reset" type="button">체크 초기화</button></div>';
+  // app 안에 렌더링된 체크리스트에 저장·카운트·초기화 동작을 붙인다
+  function bindChecklist(groups, key, checked) {
+    const total = groups.reduce((a, g) => a + g.items.length, 0);
+    const totalEl = document.getElementById('check-total');
+    const resetBtn = document.getElementById('check-reset');
+    function update() {
+      totalEl.textContent = `체크 ${checked.length} / 전체 ${total}`;
+      groups.forEach((g, gi) => {
+        const n = checked.filter((id) => id.indexOf(gi + '-') === 0).length;
+        app.querySelector(`[data-count="${gi}"]`).textContent = `${n} / ${g.items.length}`;
+      });
+      resetBtn.disabled = checked.length === 0;
+    }
+    app.addEventListener('change', (e) => {
+      const box = e.target;
+      if (!box.matches('.check input[type=checkbox]')) return;
+      const id = box.dataset.id;
+      checked = checked.filter((x) => x !== id);
+      if (box.checked) checked.push(id);
+      box.closest('.check').classList.toggle('done', box.checked);
+      saveChecks(key, checked);
+      update();
+    });
+    resetBtn.addEventListener('click', () => {
+      if (!checked.length || !confirm(`체크한 항목 ${checked.length}개를 모두 지울까요?`)) return;
+      checked = [];
+      saveChecks(key, checked);
+      app.querySelectorAll('.check input[type=checkbox]').forEach((b) => { b.checked = false; b.closest('.check').classList.remove('done'); });
+      update();
+    });
+    update();
+  }
+  const sourcesHtml = (list) => list.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ');
 
+  // ---------- Shopping ----------
   function renderShopping() {
     const sh = TRIP.shopping;
-    let checked = loadChecks();
-    const total = sh.groups.reduce((a, g) => a + g.items.length, 0);
+    const KEY = 'nz-shop-checks';
+    const checked = loadChecks(KEY);
 
     const stores = sh.stores.map((st) => `
       <div class="card info">
@@ -266,20 +320,6 @@
           ${st.phone ? `<a class="chip grey" href="tel:${esc(st.phone.replace(/\s/g, ''))}">📞 ${esc(st.phone)}</a>` : ''}
           ${st.link ? `<a class="chip grey" href="${esc(st.link)}" target="_blank" rel="noopener">🔗 홈페이지</a>` : ''}
         </div>
-      </div>`).join('');
-
-    const groups = sh.groups.map((g, gi) => `
-      <div class="card check-group">
-        <div class="check-title"><h3>${esc(g.emoji)} ${esc(g.title)}</h3><span class="count" data-count="${gi}"></span></div>
-        ${g.where ? `<div class="check-where">${esc(g.where)}</div>` : ''}
-        ${g.items.map((it, ii) => {
-          const id = `${gi}-${ii}`, on = checked.includes(id);
-          return `
-          <label class="check${on ? ' done' : ''}">
-            <input type="checkbox" data-id="${id}"${on ? ' checked' : ''}>
-            <span class="text"><span class="name">${esc(it.name)}</span><span class="qty">${esc(it.qty)}</span>${it.note ? `<span class="memo">${esc(it.note)}</span>` : ''}</span>
-          </label>`;
-        }).join('')}
       </div>`).join('');
 
     app.innerHTML = `
@@ -297,41 +337,44 @@
         <div class="section"><div class="tips"><h3>💡 알아두기</h3><ul>${sh.notes.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>
         <div class="section">
           <div class="section-title">✅ 체크리스트 <span class="sub">5명 · 7박 기준 수량. 체크한 내용은 이 휴대폰에 저장돼요</span></div>
-          <div class="check-head"><span id="check-total"></span><button class="btn outline" id="check-reset" type="button">체크 초기화</button></div>
-          <div class="check-list" id="check-list">${groups}</div>
+          ${checkHead}
+          <div class="check-list">${sh.groups.map((g, gi) => groupHtml(g, gi, checked)).join('')}</div>
         </div>
-        <div class="footer">확인일 ${esc(sh.verified)} · 매장 시간과 규정은 바뀔 수 있으니 출발 전 다시 확인하세요.<br>
-          출처: ${sh.sources.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ')}</div>
+        <div class="footer">확인일 ${esc(sh.verified)} · 매장 시간과 규정은 바뀔 수 있으니 출발 전 다시 확인하세요.<br>출처: ${sourcesHtml(sh.sources)}</div>
       </div>`;
+    bindChecklist(sh.groups, KEY, checked);
+  }
 
-    const list = document.getElementById('check-list');
-    const resetBtn = document.getElementById('check-reset');
-    function updateCounts() {
-      document.getElementById('check-total').textContent = `체크 ${checked.length} / 전체 ${total}`;
-      sh.groups.forEach((g, gi) => {
-        const n = checked.filter((id) => id.indexOf(gi + '-') === 0).length;
-        list.querySelector(`[data-count="${gi}"]`).textContent = `${n} / ${g.items.length}`;
-      });
-      resetBtn.disabled = checked.length === 0;
-    }
-    list.addEventListener('change', (e) => {
-      const box = e.target;
-      if (!box.matches('input[type=checkbox]')) return;
-      const id = box.dataset.id;
-      checked = checked.filter((x) => x !== id);
-      if (box.checked) checked.push(id);
-      box.closest('.check').classList.toggle('done', box.checked);
-      saveChecks(checked);
-      updateCounts();
-    });
-    resetBtn.addEventListener('click', () => {
-      if (!checked.length || !confirm(`체크한 항목 ${checked.length}개를 모두 지울까요?`)) return;
-      checked = [];
-      saveChecks(checked);
-      list.querySelectorAll('input[type=checkbox]').forEach((b) => { b.checked = false; b.closest('.check').classList.remove('done'); });
-      updateCounts();
-    });
-    updateCounts();
+  // ---------- Packing ----------
+  function renderPacking() {
+    const pk = TRIP.packing;
+    const KEY = 'nz-pack-checks';
+    const checked = loadChecks(KEY);
+
+    const sections = pk.sections.map((sec) => `
+      <div class="section">
+        <div class="section-title">${esc(sec.emoji)} ${esc(sec.title)} <span class="sub">${esc(sec.desc)}</span></div>
+        <div class="check-list">${pk.groups.map((g, gi) => g.section === sec.key ? groupHtml(g, gi, checked) : '').join('')}</div>
+      </div>`).join('');
+
+    app.innerHTML = `
+      <div class="topbar"><div class="inner">
+        <a class="btn" href="#/">← 전체 일정</a>
+        <a class="btn" href="#/shopping">🛒 장보기</a>
+      </div></div>
+      <div class="wrap">
+        <h1 class="page-title">🎒 준비물 가이드</h1>
+        <div class="summary">${esc(pk.intro)}</div>
+        <div class="section"><div class="tips"><h3>🌤 2월 남섬 날씨</h3><ul>${pk.weather.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>
+        <div class="section">
+          <div class="section-title">✅ 체크리스트 <span class="sub">체크한 내용은 이 휴대폰에 저장돼요</span></div>
+          ${checkHead}
+        </div>
+        ${sections}
+        <div class="section"><div class="tips"><h3>❓ 확인이 필요한 것</h3><ul>${pk.checks.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>
+        <div class="footer">확인일 ${esc(pk.verified)} · 입국 규정과 수수료는 바뀔 수 있으니 출발 전 아래 공식 링크에서 다시 확인하세요.<br>출처: ${sourcesHtml(pk.sources)}</div>
+      </div>`;
+    bindChecklist(pk.groups, KEY, checked);
   }
 
   function render() {
@@ -342,6 +385,7 @@
     if (m) renderDay(parseInt(m[1], 10));
     else if (h.indexOf('#/credits') === 0) renderCredits();
     else if (h.indexOf('#/shopping') === 0) renderShopping();
+    else if (h.indexOf('#/packing') === 0) renderPacking();
     else renderHome();
     window.scrollTo(0, 0);
   }
