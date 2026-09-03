@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8080", "--bind", "127.0.0.1"],
+      "port": 8080
+    },
+    {
+      "name": "scratch",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8081", "--bind", "127.0.0.1", "--directory", "/private/tmp/claude-501/-Users-dongwookim-Workspace-newz-github-io/70af14c3-59fb-4ee1-90fe-99a11678e06d/scratchpad"],
+      "port": 8081
+    }
+  ]
+}
