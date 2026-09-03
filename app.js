@@ -122,6 +122,13 @@
           <div class="day-list">${days}</div>
         </div>
         <div class="section">
+          <a class="card link-card" href="#/shopping">
+            <div class="icon">🛒</div>
+            <div class="body"><div class="t">장보기 가이드</div><div class="d">첫날 퀸스타운 장보기 체크리스트 · 마트 위치 · 알아두기</div></div>
+            <div class="arr">›</div>
+          </a>
+        </div>
+        <div class="section">
           <div class="section-title">✈️ 항공편</div>
           <div class="card">${flights}</div>
         </div>
@@ -277,8 +284,8 @@
 
     app.innerHTML = `
       <div class="topbar"><div class="inner">
-        <a class="btn" href="#/day/1">← DAY 1</a>
-        <span style="font-weight:700;color:var(--accent)">장보기 가이드</span>
+        <a class="btn" href="#/">← 전체 일정</a>
+        <a class="btn" href="#/day/1">DAY 1 →</a>
       </div></div>
       <div class="wrap">
         <h1 class="page-title">🛒 장보기 가이드</h1>
